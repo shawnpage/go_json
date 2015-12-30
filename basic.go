@@ -3,11 +3,20 @@ package main
 import (
 	"fmt"
 	//	"html"
+	"encoding/json"
+	"github.com/gorilla/mux"
 	"log"
 	"net/http"
-
-	"github.com/gorilla/mux"
+	"time"
 )
+
+type Todo struct {
+	Name      string    `json:"name"`
+	Completed bool      `json:"completed"`
+	Due       time.Time `json:"due"`
+}
+
+type Todos []Todo
 
 func main() {
 	router := mux.NewRouter().StrictSlash(true)
@@ -23,7 +32,13 @@ func Index(w http.ResponseWriter, r *http.Request) {
 }
 
 func TodoIndex(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Todo Index!")
+	todos := Todos{
+		Todo{Name: "Write presentation"},
+		Todo{Name: "Host meetup"},
+	}
+
+	json.NewEncoder(w).Encode(todos)
+	//fmt.Fprintln(w, "Todo Index!")
 }
 
 func TodoShow(w http.ResponseWriter, r *http.Request) {
